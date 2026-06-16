@@ -55,7 +55,7 @@ def main():
 
     success_count = 0
     error_count = 0
-    delay = 1.0  # Intervalo de segurança em segundos entre as requisições
+    delay = 0.05  # Intervalo de segurança em segundos entre as requisições
 
     print("="*60)
     print("Iniciando Importação em Lote via API HTTP")

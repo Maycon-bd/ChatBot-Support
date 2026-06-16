@@ -11,8 +11,10 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-# Instância global do QdrantClient compartilhada por todas as instâncias do serviço
+# Instâncias globais compartilhadas por todas as instâncias do serviço
 _qdrant_client = None
+_embeddings = None
+_text_splitter = None
 
 def get_qdrant_client() -> QdrantClient:
     global _qdrant_client
@@ -28,19 +30,31 @@ def get_qdrant_client() -> QdrantClient:
             _qdrant_client = QdrantClient(":memory:")
     return _qdrant_client
 
+def get_embeddings() -> HuggingFaceEmbeddings:
+    global _embeddings
+    if _embeddings is None:
+        logger.info("Inicializando modelo de embeddings local (Singleton): sentence-transformers/all-MiniLM-L6-v2")
+        _embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        )
+    return _embeddings
+
+def get_text_splitter() -> SemanticChunker:
+    global _text_splitter
+    if _text_splitter is None:
+        logger.info("Inicializando Semantic Chunker local (Singleton)...")
+        _text_splitter = SemanticChunker(get_embeddings())
+    return _text_splitter
+
 class QdrantService:
     def __init__(self):
         # 1. Obtém o cliente Qdrant global compartilhado
         self.client = get_qdrant_client()
 
-        # 2. Inicializa o modelo de Embeddings Local (all-MiniLM-L6-v2: 384 dimensões)
+        # 2. Inicializa o modelo de Embeddings e Text Splitter globais compartilhados
         try:
-            logger.info("Inicializando modelo de embeddings local: sentence-transformers/all-MiniLM-L6-v2")
-            self.embeddings = HuggingFaceEmbeddings(
-                model_name="sentence-transformers/all-MiniLM-L6-v2"
-            )
-            # O Semantic Chunker divide o texto semanticamente de forma inteligente
-            self.text_splitter = SemanticChunker(self.embeddings)
+            self.embeddings = get_embeddings()
+            self.text_splitter = get_text_splitter()
         except Exception as e:
             logger.error(f"Erro ao inicializar o modelo de embeddings local: {str(e)}")
             self.embeddings = None
