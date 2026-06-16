@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP Support Assistant</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2306b6d4'><path d='M12 2a10 10 0 0 0-10 10v1a3 3 0 0 0 3 3h1a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H4v-.5A8 8 0 0 1 12 4a8 8 0 0 1 8 8v.5h-2a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h1a3 3 0 0 0 3-3v-1A10 10 0 0 0 12 2z'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="fullchat-body">
+
+    <!-- ═══════════════════════════════════════
+         HEADER — topo fixo
+         ═══════════════════════════════════════ -->
+    <header class="fc-header">
+        <div class="fc-header-left">
+            <div class="fc-avatar">
+                <i data-lucide="bot"></i>
+            </div>
+            <div class="fc-header-info">
+                <span class="fc-title">ERP Support</span>
+                <span class="fc-status"><span class="status-dot online"></span>Online</span>
+            </div>
+        </div>
+
+        <!-- Widget de Tokens (compacto no header) -->
+        <div id="token-widget" class="fc-token-widget hidden">
+            <i data-lucide="cpu" class="token-icon"></i>
+            <div class="token-bar-track">
+                <div id="token-bar-fill" class="token-bar-fill"></div>
+            </div>
+            <span id="token-count-text" class="token-count-text">0%</span>
+            <span id="token-alert-badge" class="token-alert-badge hidden">
+                <i data-lucide="alert-triangle"></i>
+            </span>
+        </div>
+
+        <div class="fc-header-right">
+            <!-- Botão de usuário -->
+            <button class="fc-icon-btn" id="btn-profile-trigger" title="Perfil" onclick="openProfileModal()">
+                <i data-lucide="user-round"></i>
+            </button>
+            <!-- Menu ··· -->
+            <button class="fc-icon-btn fc-menu-btn" id="btn-header-menu" title="Menu" onclick="toggleHeaderMenu()">
+                <i data-lucide="ellipsis"></i>
+            </button>
+        </div>
+
+        <!-- Dropdown menu ··· -->
+        <div class="fc-dropdown" id="fc-dropdown">
+            <button class="fc-dropdown-item" onclick="startNewChat()">
+                <i data-lucide="plus-circle"></i> Nova conversa
+            </button>
+            <button class="fc-dropdown-item" id="btn-clear-chat">
+                <i data-lucide="trash-2"></i> Limpar chat
+            </button>
+            <div class="fc-dropdown-divider"></div>
+            <a class="fc-dropdown-item" href="/admin" target="_blank">
+                <i data-lucide="shield-check"></i> Painel Admin
+            </a>
+        </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════
+         MENSAGENS
+         ═══════════════════════════════════════ -->
+    <main class="fc-messages" id="chat-messages">
+        <!-- Welcome -->
+        <div class="fc-welcome" id="fc-welcome">
+            <div class="fc-welcome-icon">
+                <i data-lucide="sparkles"></i>
+            </div>
+            <h2>Central de Ajuda ERP</h2>
+            <p>Bem-vindo ao assistente inteligente do <strong>ERP Nexus</strong>.<br>Pergunte sobre cadastros, faturamento, NF-e, ou envie um print com o erro.</p>
+            <div class="fc-chips">
+                <button class="fc-chip" onclick="fillInput('Como cadastrar um novo cliente no ERP?')">Cadastro de Cliente</button>
+                <button class="fc-chip" onclick="fillInput('Como emitir uma Nota Fiscal Eletrônica (NF-e)?')">Emitir NF-e</button>
+                <button class="fc-chip" onclick="fillInput('Como gerar o relatório de vendas mensal?')">Relatório Financeiro</button>
+                <button class="fc-chip" onclick="fillInput('Por favor, abra um chamado para falar com o suporte.')">Abrir Chamado</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ═══════════════════════════════════════
+         INPUT — fixo na base
+         ═══════════════════════════════════════ -->
+    <footer class="fc-input-bar">
+        <!-- preview de imagem -->
+        <div id="image-preview-container" class="fc-img-preview hidden">
+            <img id="image-preview" src="" alt="Print de Erro">
+            <button id="btn-remove-image" class="fc-remove-img" title="Remover">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <div class="fc-input-row">
+            <button id="btn-attach" class="fc-attach-btn" title="Anexar print de erro">
+                <i data-lucide="paperclip"></i>
+            </button>
+            <input type="file" id="image-input" accept="image/*" hidden>
+
+            <textarea id="chat-input"
+                      placeholder="Digite sua mensagem..."
+                      rows="1"></textarea>
+
+            <button id="btn-send" class="fc-send-btn" title="Enviar">
+                <i data-lucide="send"></i>
+            </button>
+        </div>
+
+        <div class="fc-footer-bar">
+            <span id="display-user-id">Usuário: visitante_feira</span>
+            <span>ERP Nexus · Copilot N1</span>
+        </div>
+    </footer>
+
+    <!-- ═══════════════════════════════════════
+         MODAL DE PERFIL
+         ═══════════════════════════════════════ -->
+    <div id="profile-modal-overlay" class="profile-modal-overlay" onclick="closeProfileModal(event)">
+        <div class="profile-modal" id="profile-modal" role="dialog">
+            <div class="profile-modal-header">
+                <div class="profile-modal-avatar"><i data-lucide="user-round"></i></div>
+                <div>
+                    <p class="profile-modal-title" id="profile-modal-username">visitante_feira</p>
+                    <p class="profile-modal-sub">Nexus ERP · Nível 1</p>
+                </div>
+                <button class="profile-modal-close" onclick="closeProfileModal()" title="Fechar">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="profile-modal-divider"></div>
+            <div class="profile-modal-body">
+                <div class="input-group">
+                    <label for="user-id-input">Nome / ID de Acesso</label>
+                    <input type="text" id="user-id-input" value="visitante_feira" placeholder="ex: joao.silva">
+                </div>
+                <button id="btn-save-tenant" class="btn btn-primary btn-full">
+                    <i data-lucide="save"></i> Salvar Perfil
+                </button>
+                <div id="profile-status" class="status-message"></div>
+            </div>
+            <div class="profile-modal-divider"></div>
+            <div class="profile-modal-info">
+                <p class="profile-info-label">Sistema</p>
+                <ul class="info-list">
+                    <li><i data-lucide="cpu"></i> LLM: Gemini 2.0 Flash</li>
+                    <li><i data-lucide="database"></i> Vetorial: Qdrant (local)</li>
+                    <li><i data-lucide="git-branch"></i> Agente: LangGraph + RAG</li>
+                    <li><i data-lucide="layers"></i> Busca: Híbrida RRF</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container para Notificações Flutuantes (Toasts) -->
+    <div id="toast-container"></div>
+
+    <script src="/static/app.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — ERP Support Assistant</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ef4444'><path d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z'/></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        /* ─── Layout Admin ─── */
+        body { overflow: auto; }
+        .admin-root { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 40px 20px; gap: 24px; }
+
+        /* ─── Login Card ─── */
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(10,16,30,0.9);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(239,68,68,0.25);
+            border-radius: 20px;
+            padding: 36px 32px;
+            box-shadow: 0 0 60px rgba(239,68,68,0.07), 0 32px 64px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeInUp 0.4s ease;
+        }
+        .login-header { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+        .login-shield {
+            width: 56px; height: 56px; border-radius: 16px;
+            background: linear-gradient(135deg, rgba(239,68,68,0.25), rgba(239,68,68,0.1));
+            border: 1px solid rgba(239,68,68,0.3);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 24px rgba(239,68,68,0.15);
+        }
+        .login-shield i { width: 26px; height: 26px; color: #ef4444; }
+        .login-title { font-family: var(--font-header); font-size: 20px; font-weight: 700; }
+        .login-sub { font-size: 13px; color: var(--text-muted); }
+        .login-error {
+            display: none;
+            background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 10px; padding: 10px 14px;
+            font-size: 13px; color: #ef4444;
+            align-items: center; gap: 8px;
+        }
+        .login-error.show { display: flex; }
+        .login-error i { width: 15px; height: 15px; flex-shrink: 0; }
+
+        /* ─── Admin Panel ─── */
+        .admin-panel {
+            width: 100%;
+            max-width: 860px;
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+            animation: fadeInUp 0.4s ease;
+        }
+        .admin-panel.show { display: flex; }
+
+        .admin-topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(10,16,30,0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px; padding: 16px 20px;
+        }
+        .admin-topbar-left { display: flex; align-items: center; gap: 14px; }
+        .admin-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.08em; color: #ef4444;
+            background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25);
+            border-radius: 99px; padding: 3px 10px;
+        }
+        .admin-badge i { width: 11px; height: 11px; }
+
+        /* Grid de cards */
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 680px) { .admin-grid { grid-template-columns: 1fr; } }
+
+        .admin-card {
+            background: rgba(10,16,30,0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 18px; padding: 24px;
+            display: flex; flex-direction: column; gap: 16px;
+        }
+        .admin-card-title {
+            font-family: var(--font-header); font-size: 15px; font-weight: 600;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .admin-card-title i { width: 18px; height: 18px; color: var(--color-primary); }
+
+        /* Lista de documentos */
+        .doc-list { display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto; }
+        .doc-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            transition: var(--transition-smooth);
+        }
+        .doc-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(6,182,212,0.2); }
+        .doc-icon { width: 34px; height: 34px; border-radius: 9px; background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .doc-icon i { width: 16px; height: 16px; color: var(--color-primary); }
+        .doc-info { flex: 1; min-width: 0; }
+        .doc-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .doc-chunks { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .btn-delete-doc {
+            width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+            background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+            color: var(--color-error); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: var(--transition-smooth);
+        }
+        .btn-delete-doc:hover { background: rgba(239,68,68,0.18); border-color: rgba(239,68,68,0.4); }
+        .btn-delete-doc i { width: 14px; height: 14px; }
+        .doc-empty { text-align: center; color: var(--text-muted); font-size: 13px; padding: 24px 0; }
+        .doc-empty i { display: block; width: 32px; height: 32px; margin: 0 auto 10px; opacity: 0.4; }
+
+        /* Drop zone admin */
+        .admin-drop-zone {
+            border: 2px dashed rgba(6,182,212,0.25);
+            border-radius: 14px; padding: 28px 20px;
+            text-align: center; cursor: pointer;
+            transition: var(--transition-smooth);
+            background: rgba(6,182,212,0.03);
+        }
+        .admin-drop-zone:hover, .admin-drop-zone.dragover {
+            border-color: rgba(6,182,212,0.5);
+            background: rgba(6,182,212,0.07);
+        }
+        .admin-drop-zone i { width: 32px; height: 32px; color: var(--color-primary); margin-bottom: 10px; }
+        .admin-drop-text { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+        .admin-file-name { font-size: 12px; color: var(--color-primary); font-weight: 600; }
+
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .stat-box {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass);
+            border-radius: 12px; padding: 14px 16px;
+        }
+        .stat-value { font-size: 22px; font-weight: 700; font-family: var(--font-header); color: var(--color-primary); }
+        .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+        /* Upload progress */
+        .upload-progress { display: none; flex-direction: column; gap: 8px; }
+        .upload-progress.show { display: flex; }
+        .upload-progress-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; }
+        .upload-progress-fill { height: 100%; width: 0%; border-radius: 99px; background: linear-gradient(90deg, var(--color-primary), var(--color-secondary)); animation: upload-anim 1.2s ease-in-out infinite; }
+        @keyframes upload-anim { 0%{width:5%} 50%{width:85%} 100%{width:100%} }
+        .upload-progress-label { font-size: 12px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+<div class="admin-root">
+
+    <!-- ── TELA DE LOGIN ── -->
+    <div class="login-card" id="login-card">
+        <div class="login-header">
+            <div class="login-shield"><i data-lucide="shield-check"></i></div>
+            <div>
+                <p class="login-title">Painel Administrativo</p>
+                <p class="login-sub">ERP Support Assistant · Gerenciamento de Documentos</p>
+            </div>
+        </div>
+
+        <div class="login-error" id="login-error">
+            <i data-lucide="alert-circle"></i>
+            <span id="login-error-msg">Senha incorreta.</span>
+        </div>
+
+        <div class="input-group">
+            <label for="admin-password-input">Senha de Administrador</label>
+            <input type="password" id="admin-password-input" placeholder="••••••••"
+                   onkeydown="if(event.key==='Enter') doLogin()">
+        </div>
+
+        <button class="btn btn-primary btn-full" onclick="doLogin()" id="btn-login">
+            <i data-lucide="log-in"></i> Acessar Painel
+        </button>
+
+        <a href="/" style="text-align:center;font-size:12px;color:var(--text-muted);text-decoration:none;">
+            ← Voltar para o Chat
+        </a>
+    </div>
+
+    <!-- ── PAINEL ADMIN ── -->
+    <div class="admin-panel" id="admin-panel">
+
+        <!-- Topbar -->
+        <div class="admin-topbar">
+            <div class="admin-topbar-left">
+                <div class="logo-icon" style="width:38px;height:38px;">
+                    <i data-lucide="shield-check" style="width:20px;height:20px;color:#fff;"></i>
+                </div>
+                <div>
+                    <p style="font-weight:700;font-size:15px;font-family:var(--font-header);">Painel Administrativo</p>
+                    <p style="font-size:12px;color:var(--text-muted);">Base de Conhecimento · Nexus ERP</p>
+                </div>
+                <span class="admin-badge"><i data-lucide="lock"></i> Admin</span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+                <a href="/" class="btn btn-secondary" style="font-size:13px;text-decoration:none;">
+                    <i data-lucide="message-square"></i> Ir para o Chat
+                </a>
+                <button class="btn btn-icon" onclick="doLogout()" title="Sair">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Grid principal -->
+        <div class="admin-grid">
+
+            <!-- Card: Upload de Documentos -->
+            <div class="admin-card">
+                <p class="admin-card-title"><i data-lucide="upload-cloud"></i> Adicionar Documento</p>
+
+                <div class="admin-drop-zone" id="admin-drop-zone" onclick="document.getElementById('admin-file-input').click()">
+                    <i data-lucide="file-plus"></i>
+                    <p class="admin-drop-text">Arraste um arquivo ou clique para selecionar</p>
+                    <p class="admin-file-name" id="admin-file-name">Nenhum arquivo selecionado</p>
+                    <input type="file" id="admin-file-input" accept=".txt,.md,.html" hidden>
+                </div>
+
+                <div class="upload-progress" id="upload-progress">
+                    <div class="upload-progress-bar"><div class="upload-progress-fill"></div></div>
+                    <p class="upload-progress-label">Processando e indexando documento...</p>
+                </div>
+
+                <div id="admin-upload-status" class="status-message"></div>
+
+                <button class="btn btn-primary btn-full" id="btn-admin-upload" disabled onclick="adminUpload()">
+                    <i data-lucide="zap"></i> Indexar na Base Vetorial
+                </button>
+
+                <p style="font-size:11px;color:var(--text-muted);">
+                    Formatos suportados: <strong>.txt · .md · .html</strong><br>
+                    O conteúdo será fragmentado semanticamente e indexado no Qdrant.
+                </p>
+            </div>
+
+            <!-- Card: Estatísticas -->
+            <div class="admin-card">
+                <p class="admin-card-title"><i data-lucide="bar-chart-2"></i> Visão Geral</p>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <p class="stat-value" id="stat-docs">—</p>
+                        <p class="stat-label">Documentos indexados</p>
+                    </div>
+                    <div class="stat-box">
+                        <p class="stat-value" id="stat-chunks">—</p>
+                        <p class="stat-label">Chunks no Qdrant</p>
+                    </div>
+                </div>
+
+                <div style="margin-top:8px;">
+                    <p style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:10px;">Sistema</p>
+                    <ul class="info-list">
+                        <li><i data-lucide="cpu"></i> LLM: Gemini 2.0 Flash</li>
+                        <li><i data-lucide="database"></i> Vetorial: Qdrant (local)</li>
+                        <li><i data-lucide="git-branch"></i> Agente: LangGraph + RAG Híbrido</li>
+                        <li><i data-lucide="layers"></i> Embedding: gemini-embedding-001 (3072d)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Lista de Documentos -->
+        <div class="admin-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+                <p class="admin-card-title" style="margin:0;"><i data-lucide="files"></i> Documentos na Base</p>
+                <button class="btn btn-secondary" onclick="loadDocs()" style="font-size:12px;padding:7px 12px;">
+                    <i data-lucide="refresh-cw"></i> Atualizar
+                </button>
+            </div>
+            <div class="doc-list" id="doc-list">
+                <div class="doc-empty">
+                    <i data-lucide="loader-2"></i>
+                    Carregando documentos...
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/static/admin.js"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>
