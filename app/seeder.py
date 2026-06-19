@@ -10,7 +10,7 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 MANUAL_ERP_GENERICO = """
-=== MANUAL DE OPERAÇÃO E TREINAMENTO - ERP NEXUS ===
+=== MANUAL DE OPERAÇÃO E TREINAMENTO - ERP ODOO ===
 
 MÓDULO 1: CADASTRO DE CLIENTES
 1.1 Novo Cadastro de Cliente

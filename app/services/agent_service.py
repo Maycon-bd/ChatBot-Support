@@ -56,7 +56,7 @@ def validate_input_guardrails(query: str) -> Optional[str]:
     # 3. Palavras Ofensivas
     offensive_words = ["idiota", "burro", "inútil", "merda", "foda", "caralho", "porra", "stupid"]
     if any(p in q_lower for p in offensive_words):
-        return "Por favor, mantenha o respeito. Como posso te ajudar com o ERP Nexus?"
+        return "Por favor, mantenha o respeito. Como posso te ajudar com o Odoo ERP?"
         
     return None
 

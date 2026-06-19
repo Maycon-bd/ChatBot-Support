@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ERP Support Assistant</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2306b6d4'><path d='M12 2a10 10 0 0 0-10 10v1a3 3 0 0 0 3 3h1a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H4v-.5A8 8 0 0 1 12 4a8 8 0 0 1 8 8v.5h-2a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h1a3 3 0 0 0 3-3v-1A10 10 0 0 0 12 2z'/></svg>">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2306b6d4'><path d='M12 2a10 10 0 0 0-10 10v1a3 3 0 0 0 3 3h1a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H4v-.5A8 8 0 0 1 12 4a8 8 0 0 1 8 8v.5h-2a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h1a3 3 0 0 0 3-3v-1A10 10 0 0 0 12 2z'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body class="fullchat-body">
 
     <!-- ═══════════════════════════════════════
@@ -75,12 +80,17 @@
                 <i data-lucide="sparkles"></i>
             </div>
             <h2>Central de Ajuda ERP</h2>
-            <p>Bem-vindo ao assistente inteligente do <strong>ERP Nexus</strong>.<br>Pergunte sobre cadastros, faturamento, NF-e, ou envie um print com o erro.</p>
+            <p>Bem-vindo ao assistente inteligente do <strong>ERP Odoo</strong>.<br>Pergunte sobre cadastros,
+                faturamento, NF-e, ou envie um print com o erro.</p>
             <div class="fc-chips">
-                <button class="fc-chip" onclick="fillInput('Como cadastrar um novo cliente no ERP?')">Cadastro de Cliente</button>
-                <button class="fc-chip" onclick="fillInput('Como emitir uma Nota Fiscal Eletrônica (NF-e)?')">Emitir NF-e</button>
-                <button class="fc-chip" onclick="fillInput('Como gerar o relatório de vendas mensal?')">Relatório Financeiro</button>
-                <button class="fc-chip" onclick="fillInput('Por favor, abra um chamado para falar com o suporte.')">Abrir Chamado</button>
+                <button class="fc-chip" onclick="fillInput('Como cadastrar um novo cliente no ERP?')">Cadastro de
+                    Cliente</button>
+                <button class="fc-chip" onclick="fillInput('Como emitir uma Nota Fiscal Eletrônica (NF-e)?')">Emitir
+                    NF-e</button>
+                <button class="fc-chip" onclick="fillInput('Como gerar o relatório de vendas mensal?')">Relatório
+                    Financeiro</button>
+                <button class="fc-chip"
+                    onclick="fillInput('Por favor, abra um chamado para falar com o suporte.')">Abrir Chamado</button>
             </div>
         </div>
     </main>
@@ -103,9 +113,7 @@
             </button>
             <input type="file" id="image-input" accept="image/*" hidden>
 
-            <textarea id="chat-input"
-                      placeholder="Digite sua mensagem..."
-                      rows="1"></textarea>
+            <textarea id="chat-input" placeholder="Digite sua mensagem..." rows="1"></textarea>
 
             <button id="btn-send" class="fc-send-btn" title="Enviar">
                 <i data-lucide="send"></i>
@@ -114,7 +122,7 @@
 
         <div class="fc-footer-bar">
             <span id="display-user-id">Usuário: visitante_feira</span>
-            <span>ERP Nexus · Copilot N1</span>
+            <span>ERP Odoo · Copilot N1</span>
         </div>
     </footer>
 
@@ -127,7 +135,7 @@
                 <div class="profile-modal-avatar"><i data-lucide="user-round"></i></div>
                 <div>
                     <p class="profile-modal-title" id="profile-modal-username">visitante_feira</p>
-                    <p class="profile-modal-sub">Nexus ERP · Nível 1</p>
+                    <p class="profile-modal-sub">ERP Odoo · Nível 1</p>
                 </div>
                 <button class="profile-modal-close" onclick="closeProfileModal()" title="Fechar">
                     <i data-lucide="x"></i>
@@ -163,4 +171,5 @@
     <script src="/static/app.js"></script>
     <script>lucide.createIcons();</script>
 </body>
+
 </html>
